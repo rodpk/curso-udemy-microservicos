@@ -6,7 +6,7 @@ const PORT = env.PORT || 8082;
 
 app.get('/api/status', (req, res) => {
     res.status(200).json({
-        service: 'Auth API',
+        service: 'Sales API',
         status: 'ok',
         message: 'API is running',
         httpStatus: 200
