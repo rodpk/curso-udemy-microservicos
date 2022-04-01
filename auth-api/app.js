@@ -2,7 +2,7 @@ import express from "express";
 
 const app = express();
 const env = process.env;
-const PORT = env.PORT || 8080; // porta padrão ou 8080 caso não seja informada
+const PORT = env.PORT || 8081; // porta padrão ou 8080 caso não seja informada
 
 app.get('/api/status', (req, res) => {
     res.status(200).json({
