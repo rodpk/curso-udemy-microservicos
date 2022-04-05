@@ -1,6 +1,9 @@
 import UserRepository from "../repository/UserRepository.js";
 import * as httpStatus from "../../../config/constants/httpStatus.js";
 import UserException from "../exception/UserException.js";
+import * as secrets from "../../../config/constants/secrets.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 class UserService {
   async findById(id) {
@@ -9,6 +12,50 @@ class UserService {
     } catch (err) {
       console.log(err.message);
       return null;
+    }
+  }
+
+  async getAccessToken(req) {
+    try {
+      console.log("BODY::::" + req.body);
+      const { email, password } = req.body;
+      this.validateAccessTokenData(email, password);
+      let user = await UserRepository.findByEmail(email);
+      this.validateUserNotFound(user);
+      await this.validatePassword(password, user.password);
+      let authUser = { id: user.id, name: user.name, email: user.email };
+      const accessToken = jwt.sign({ authUser }, secrets.API_SECRET, {
+        expiresIn: "1d",
+      });
+
+      return {
+        status: httpStatus.SUCCESS,
+        accessToken: accessToken,
+      };
+    } catch (err) {
+      console.log(err);
+      return {
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
+        message: err.message,
+      };
+    }
+  }
+
+  async validatePassword(pass, hashPass) {
+    if (!(await bcrypt.compare(pass, hashPass))) {
+      throw new UserException(
+        httpStatus.UNAUTHORIZED,
+        "user password is invalid."
+      );
+    }
+  }
+
+  validateAccessTokenData(email, password) {
+    if (!email || !password) {
+      throw new UserException(
+        httpStatus.UNAUTHORIZED,
+        "user email or password was not informed."
+      );
     }
   }
 
