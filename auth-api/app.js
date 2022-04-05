@@ -1,5 +1,6 @@
 import express from "express";
 
+import userRoutes from './src/modules/user/routes/UserRoutes.js';
 
 import * as db from "./src/config/db/initialData.js";
 
@@ -9,6 +10,9 @@ const PORT = env.PORT || 8081; // porta padrão ou 8081 caso não seja informada
 
 
 db.createInitialData();
+
+app.use(userRoutes);
+app.use(express.json());
 
 app.get('/api/status', (req, res) => {
     res.status(200).json({
