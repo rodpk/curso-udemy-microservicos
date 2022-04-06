@@ -50,6 +50,12 @@ class UserService {
     }
   }
 
+  validateAuthenticatedUser(user, authUser) {
+    if (!authUser || user.id !== authUser.id) {
+      throw new UserException(httpStatus.FORBIDDEN, "you cannot access this user data.");
+    }
+  }
+
   validateAccessTokenData(email, password) {
     if (!email || !password) {
       throw new UserException(
@@ -62,9 +68,11 @@ class UserService {
   async findByEmail(req) {
     try {
       const { email } = req.params;
+      const { authUser } = req;
       this.validateRequestData(email);
       let user = await UserRepository.findByEmail(email);
       this.validateUserNotFound(user);
+      this.validateAuthenticatedUser(user, authUser);
       return {
         status: httpStatus.SUCCESS,
         user: {
@@ -75,7 +83,7 @@ class UserService {
       };
     } catch (err) {
       return {
-        status: error.status ? error.status : httpStatus.INTERNAL_SERVER_ERROR,
+        status: err.status ? err.status : httpStatus.INTERNAL_SERVER_ERROR,
         message: err.message,
       };
     }

@@ -12,6 +12,12 @@ export async function createInitialData() {
             email: 'rodp.rodrigopinheiro@gmail.com',
             password: await bcrypt.hash('admin', 10)
         });
+
+        await User.create({
+            name: 'yahatak',
+            email: 'yahata.rodrigopinheiro@gmail.com',
+            password: await bcrypt.hash('admin', 10)
+        });
     } catch(err) {
         console.log(err);
     }
