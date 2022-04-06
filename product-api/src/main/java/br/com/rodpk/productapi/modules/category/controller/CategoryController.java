@@ -1,4 +1,4 @@
-package br.com.rodpk.productapi.modules.product.controller;
+package br.com.rodpk.productapi.modules.category.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.rodpk.productapi.modules.product.dto.CategoryRequest;
-import br.com.rodpk.productapi.modules.product.dto.CategoryResponse;
-import br.com.rodpk.productapi.modules.product.service.CategoryService;
+import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
+import br.com.rodpk.productapi.modules.category.dto.CategoryResponse;
+import br.com.rodpk.productapi.modules.category.service.CategoryService;
 
 @RestController
 @RequestMapping("api/category")
