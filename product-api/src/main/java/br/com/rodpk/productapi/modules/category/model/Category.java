@@ -1,4 +1,4 @@
-package br.com.rodpk.productapi.modules.product.model;
+package br.com.rodpk.productapi.modules.category.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 import org.springframework.beans.BeanUtils;
 
-import br.com.rodpk.productapi.modules.product.dto.CategoryRequest;
+import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

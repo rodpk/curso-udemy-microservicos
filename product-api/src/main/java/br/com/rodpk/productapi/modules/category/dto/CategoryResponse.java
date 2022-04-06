@@ -1,8 +1,8 @@
-package br.com.rodpk.productapi.modules.product.dto;
+package br.com.rodpk.productapi.modules.category.dto;
 
 import org.springframework.beans.BeanUtils;
 
-import br.com.rodpk.productapi.modules.product.model.Category;
+import br.com.rodpk.productapi.modules.category.model.Category;
 import lombok.Data;
 
 @Data

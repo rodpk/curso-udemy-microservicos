@@ -1,19 +1,27 @@
-package br.com.rodpk.productapi.modules.product.service;
+package br.com.rodpk.productapi.modules.category.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.rodpk.productapi.config.exception.ValidationException;
-import br.com.rodpk.productapi.modules.product.dto.CategoryRequest;
-import br.com.rodpk.productapi.modules.product.dto.CategoryResponse;
-import br.com.rodpk.productapi.modules.product.model.Category;
-import br.com.rodpk.productapi.modules.product.repository.CategoryRepository;
+import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
+import br.com.rodpk.productapi.modules.category.dto.CategoryResponse;
+import br.com.rodpk.productapi.modules.category.model.Category;
+import br.com.rodpk.productapi.modules.category.repository.CategoryRepository;
 
 @Service
 public class CategoryService {
     
     @Autowired // faz injeção de dependência
     private CategoryRepository repository;
+
+
+
+
+    public Category findById(Integer id) {
+        return repository.findById(id).orElseThrow(() -> new ValidationException("Supplier not found"));
+    }
+    
 
     public CategoryResponse save(CategoryRequest request) {
         validateCategoryNameInformed(request);

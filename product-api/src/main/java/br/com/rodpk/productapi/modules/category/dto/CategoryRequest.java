@@ -1,4 +1,4 @@
-package br.com.rodpk.productapi.modules.product.dto;
+package br.com.rodpk.productapi.modules.category.dto;
 
 import lombok.Data;
 
