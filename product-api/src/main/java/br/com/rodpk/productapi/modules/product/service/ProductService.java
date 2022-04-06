@@ -4,10 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.rodpk.productapi.config.exception.ValidationException;
-import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
-import br.com.rodpk.productapi.modules.category.dto.CategoryResponse;
-import br.com.rodpk.productapi.modules.category.model.Category;
-import br.com.rodpk.productapi.modules.category.repository.CategoryRepository;
 import br.com.rodpk.productapi.modules.category.service.CategoryService;
 import br.com.rodpk.productapi.modules.product.dto.ProductRequest;
 import br.com.rodpk.productapi.modules.product.dto.ProductResponse;
