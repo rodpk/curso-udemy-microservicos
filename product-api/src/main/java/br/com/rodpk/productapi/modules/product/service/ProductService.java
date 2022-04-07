@@ -1,5 +1,8 @@
 package br.com.rodpk.productapi.modules.product.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,43 @@ public class ProductService {
         var supplier = supplierService.findById(request.getSupplierID());
         var product = repository.save(Product.of(request, category, supplier));
         return ProductResponse.of(product);
+    }
+
+    public Product findById(Integer id) {
+        return repository.findById(id).orElseThrow(() -> new ValidationException("Category not found"));
+    }
+
+    public ProductResponse findByIdResponse(Integer id) {
+        if(id == null) throw new ValidationException("id must be informed");
+        return ProductResponse.of(findById(id));
+    }
+    public List<ProductResponse> findByName(String name) {
+        if (name.isEmpty())
+            throw new ValidationException("category description must be informed.");
+
+        return repository.findByNameIgnoreCase(name).stream().map(ProductResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> findAll() {
+        return repository.findAll().stream().map(ProductResponse::of).collect(Collectors.toList());
+    }
+
+
+    public List<ProductResponse> findBySupplierId(Integer supplierId) {
+        if (supplierId == null)
+            throw new ValidationException("supplier id must be informed");
+
+        return repository.findBySupplierId(supplierId).stream().map(ProductResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> findByCategoryId(Integer categoryId) {
+        if (categoryId == null)
+            throw new ValidationException("supplier id must be informed");
+
+        return repository.findBySupplierId(categoryId).stream().map(ProductResponse::of)
+                .collect(Collectors.toList());
     }
 
     private void validateProductData(ProductRequest request) {

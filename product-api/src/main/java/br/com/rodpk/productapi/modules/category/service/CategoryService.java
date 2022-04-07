@@ -43,7 +43,8 @@ public class CategoryService {
         // pra cada category mapeia pra categoryResponse
         // .map(category -> CategoryResponse.of(category)) == CategoryResponse::of
         //--
-        return repository.findByDescriptionContainingIgnoreCase(description).stream().map(CategoryResponse::of)
+        System.out.println(description);
+        return repository.findByDescriptionIgnoreCase(description).stream().map(CategoryResponse::of)
                 .collect(Collectors.toList());
     }
 

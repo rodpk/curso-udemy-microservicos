@@ -36,8 +36,8 @@ public class CategoryController {
         return service.findByIdResponse(id);
     }
 
-    @GetMapping("description/{description}")
-    public List<CategoryResponse> findByDescription(@PathVariable String description) {
-        return service.findByDescription(description);
+    @GetMapping("description/{desc}")
+    public List<CategoryResponse> findByDescription(@PathVariable String desc) {
+        return service.findByDescription(desc);
     }
 }
