@@ -6,17 +6,22 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.config.exception.ValidationException;
 import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
 import br.com.rodpk.productapi.modules.category.dto.CategoryResponse;
 import br.com.rodpk.productapi.modules.category.model.Category;
 import br.com.rodpk.productapi.modules.category.repository.CategoryRepository;
+import br.com.rodpk.productapi.modules.product.service.ProductService;
 
 @Service
 public class CategoryService {
 
     @Autowired // faz injeção de dependência
     private CategoryRepository repository;
+
+    @Autowired
+    private ProductService productService;
 
     public Category findById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new ValidationException("Category not found"));
@@ -25,6 +30,15 @@ public class CategoryService {
     public CategoryResponse save(CategoryRequest request) {
         validateCategoryNameInformed(request);
         var category = repository.save(Category.of(request));
+        return CategoryResponse.of(category);
+    }
+
+
+    public CategoryResponse update(CategoryRequest request, Integer id) {
+        validateCategoryNameInformed(request);
+        var category = Category.of(request);
+        category.setId(id);
+        repository.save(category);
         return CategoryResponse.of(category);
     }
 
@@ -52,5 +66,13 @@ public class CategoryService {
         if (request.getDescription() == null) {
             throw new ValidationException("Category name is required");
         }
+    }
+
+    public SuccessResponse delete(Integer id) {
+        if (id == null) throw new ValidationException("id must be informed");
+        if (productService.existsBySupplierId(id)) throw new ValidationException("Category is used by products");
+
+        repository.deleteById(id);
+        return SuccessResponse.create("supplier was deleted");
     }
 }

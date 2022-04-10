@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.config.exception.ValidationException;
+import br.com.rodpk.productapi.modules.product.service.ProductService;
 import br.com.rodpk.productapi.modules.supplier.dto.SupplierRequest;
 import br.com.rodpk.productapi.modules.supplier.dto.SupplierResponse;
 import br.com.rodpk.productapi.modules.supplier.model.Supplier;
@@ -17,6 +19,9 @@ public class SupplierService {
     
     @Autowired // faz injeção de dependência
     private SupplierRepository repository;
+
+    @Autowired
+    private ProductService productService;
 
 
     public Supplier findById(Integer id) {
@@ -33,6 +38,16 @@ public class SupplierService {
         var supplier = repository.save(Supplier.of(request));
         return SupplierResponse.of(supplier);
     }
+
+
+    public SupplierResponse update(SupplierRequest request, Integer id) {
+        validateSupplierNameInformed(request);
+        var supplier = Supplier.of(request);
+        supplier.setId(id);
+        repository.save(supplier);
+        return SupplierResponse.of(supplier);
+    }
+
     public List<SupplierResponse> findByName(String name) {
         if (name.isEmpty())
             throw new ValidationException("category description must be informed.");
@@ -49,5 +64,13 @@ public class SupplierService {
         if(request.getName() == null) {
             throw new ValidationException("Category name is required");
         }
+    }
+
+    public SuccessResponse delete(Integer id) {
+        if (id == null) throw new ValidationException("id must be informed");
+        if (productService.existsBySupplierId(id)) throw new ValidationException("supplier is used by products");
+
+        repository.deleteById(id);
+        return SuccessResponse.create("supplier was deleted");
     }
 }

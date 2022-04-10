@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.config.exception.ValidationException;
 import br.com.rodpk.productapi.modules.category.service.CategoryService;
 import br.com.rodpk.productapi.modules.product.dto.ProductRequest;
@@ -34,6 +35,17 @@ public class ProductService {
         var category = categoryService.findById(request.getCategoryID());
         var supplier = supplierService.findById(request.getSupplierID());
         var product = repository.save(Product.of(request, category, supplier));
+        return ProductResponse.of(product);
+    }
+
+    public ProductResponse update(ProductRequest request, Integer id) {
+        validateProductData(request);
+        // ja tem foreign key...
+        var category = categoryService.findById(request.getCategoryID());
+        var supplier = supplierService.findById(request.getSupplierID());
+        var product = Product.of(request, category, supplier);
+        product.setId(id);
+        repository.save(product);
         return ProductResponse.of(product);
     }
 
@@ -90,5 +102,21 @@ public class ProductService {
         if (request.getCategoryID() == null) {
             throw new ValidationException("Category id is required");
         }
+    }
+
+
+    public SuccessResponse delete(Integer id) {
+        if (id == null)
+            throw new ValidationException("id must be informed");
+
+        repository.deleteById(id);
+        return SuccessResponse.create("Product deleted");
+    }
+    public Boolean existsByCategoryId(Integer categoryId) {
+        return repository.existsByCategoryId(categoryId);
+    }
+
+    public Boolean existsBySupplierId(Integer categoryId) {
+        return repository.existsBySupplierId(categoryId);
     }
 }

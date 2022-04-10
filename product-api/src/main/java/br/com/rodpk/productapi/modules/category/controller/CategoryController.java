@@ -3,13 +3,16 @@ package br.com.rodpk.productapi.modules.category.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
 import br.com.rodpk.productapi.modules.category.dto.CategoryResponse;
 import br.com.rodpk.productapi.modules.category.service.CategoryService;
@@ -39,5 +42,15 @@ public class CategoryController {
     @GetMapping("description/{desc}")
     public List<CategoryResponse> findByDescription(@PathVariable String desc) {
         return service.findByDescription(desc);
+    }
+
+    @PutMapping("/{id}")
+    public CategoryResponse update(@PathVariable Integer id, @RequestBody CategoryRequest request) {
+        return service.update(request, id);
+    }
+
+    @DeleteMapping("/{id}")
+    public SuccessResponse delete(@PathVariable Integer id) {
+        return service.delete(id);
     }
 }

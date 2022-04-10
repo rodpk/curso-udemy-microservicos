@@ -3,13 +3,16 @@ package br.com.rodpk.productapi.modules.supplier.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.modules.supplier.dto.SupplierRequest;
 import br.com.rodpk.productapi.modules.supplier.dto.SupplierResponse;
 import br.com.rodpk.productapi.modules.supplier.service.SupplierService;
@@ -37,8 +40,18 @@ public class SupplierController {
         return service.findAll();
     }
 
+    @PutMapping("/{id}")
+    public SupplierResponse update(@PathVariable Integer id, @RequestBody SupplierRequest request) {
+        return service.update(request, id);
+    }
+
     @GetMapping("/{id}")
     public SupplierResponse findById(@PathVariable Integer id) {
         return service.findByIdResponse(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public SuccessResponse delete(@PathVariable Integer id) {
+        return service.delete(id);
     }
 }
