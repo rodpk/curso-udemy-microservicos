@@ -12,7 +12,7 @@ import br.com.rodpk.productapi.modules.category.dto.CategoryRequest;
 import br.com.rodpk.productapi.modules.category.dto.CategoryResponse;
 import br.com.rodpk.productapi.modules.category.model.Category;
 import br.com.rodpk.productapi.modules.category.repository.CategoryRepository;
-import br.com.rodpk.productapi.modules.product.service.ProductService;
+import br.com.rodpk.productapi.modules.product.repository.ProductRepository;
 
 @Service
 public class CategoryService {
@@ -21,7 +21,7 @@ public class CategoryService {
     private CategoryRepository repository;
 
     @Autowired
-    private ProductService productService;
+    private ProductRepository productRepository;
 
     public Category findById(Integer id) {
         return repository.findById(id).orElseThrow(() -> new ValidationException("Category not found"));
@@ -70,7 +70,7 @@ public class CategoryService {
 
     public SuccessResponse delete(Integer id) {
         if (id == null) throw new ValidationException("id must be informed");
-        if (productService.existsBySupplierId(id)) throw new ValidationException("Category is used by products");
+        if (productRepository.existsBySupplierId(id)) throw new ValidationException("Category is used by products");
 
         repository.deleteById(id);
         return SuccessResponse.create("supplier was deleted");

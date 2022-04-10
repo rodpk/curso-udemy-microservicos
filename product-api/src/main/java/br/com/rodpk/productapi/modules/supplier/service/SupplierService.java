@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.config.exception.ValidationException;
-import br.com.rodpk.productapi.modules.product.service.ProductService;
+import br.com.rodpk.productapi.modules.product.repository.ProductRepository;
 import br.com.rodpk.productapi.modules.supplier.dto.SupplierRequest;
 import br.com.rodpk.productapi.modules.supplier.dto.SupplierResponse;
 import br.com.rodpk.productapi.modules.supplier.model.Supplier;
@@ -21,7 +21,7 @@ public class SupplierService {
     private SupplierRepository repository;
 
     @Autowired
-    private ProductService productService;
+    private ProductRepository productRepository;
 
 
     public Supplier findById(Integer id) {
@@ -68,7 +68,7 @@ public class SupplierService {
 
     public SuccessResponse delete(Integer id) {
         if (id == null) throw new ValidationException("id must be informed");
-        if (productService.existsBySupplierId(id)) throw new ValidationException("supplier is used by products");
+        if (productRepository.existsBySupplierId(id)) throw new ValidationException("supplier is used by products");
 
         repository.deleteById(id);
         return SuccessResponse.create("supplier was deleted");
