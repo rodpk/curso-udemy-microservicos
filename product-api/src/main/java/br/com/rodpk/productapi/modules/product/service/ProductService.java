@@ -11,6 +11,7 @@ import br.com.rodpk.productapi.config.exception.ValidationException;
 import br.com.rodpk.productapi.modules.category.service.CategoryService;
 import br.com.rodpk.productapi.modules.product.dto.ProductRequest;
 import br.com.rodpk.productapi.modules.product.dto.ProductResponse;
+import br.com.rodpk.productapi.modules.product.dto.ProductStockDTO;
 import br.com.rodpk.productapi.modules.product.model.Product;
 import br.com.rodpk.productapi.modules.product.repository.ProductRepository;
 import br.com.rodpk.productapi.modules.supplier.service.SupplierService;
@@ -118,5 +119,9 @@ public class ProductService {
 
     public Boolean existsBySupplierId(Integer categoryId) {
         return repository.existsBySupplierId(categoryId);
+    }
+
+    public void updateProductStock(ProductStockDTO dto) {
+        
     }
 }

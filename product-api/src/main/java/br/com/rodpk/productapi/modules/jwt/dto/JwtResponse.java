@@ -2,6 +2,8 @@ package br.com.rodpk.productapi.modules.jwt.dto;
 
 import java.util.LinkedHashMap;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +20,10 @@ public class JwtResponse {
     private String name;
     private String email;
 
-    public static JwtResponse getUser(Claims jwtClaims) {
+    public static JwtResponse getUserMyVersion(Claims jwtClaims) {
         try {
 
-            boolean containsKey = jwtClaims.containsKey("id");
+            boolean containsKey = jwtClaims.containsKey("authUser");
 
             if (containsKey) {
                 var authUser = jwtClaims.get("authUser", LinkedHashMap.class);
@@ -40,6 +42,17 @@ public class JwtResponse {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    // metodo usado no curso
+    public static JwtResponse getUser(Claims jwtClaims) {
+        try {
+            return new ObjectMapper().convertValue(jwtClaims.get("authUser"), JwtResponse.class);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+
     }
 
 }

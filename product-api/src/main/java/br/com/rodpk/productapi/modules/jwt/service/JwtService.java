@@ -19,6 +19,8 @@ public class JwtService {
     private String apiSecret;
 
     public void validateAuthorization(String token) throws AuthException {
+        if (token == null) throw new AuthException("access token was not informed.");
+
         try {
             var accesToken = extractToken(token);
             var claims = Jwts
@@ -40,7 +42,6 @@ public class JwtService {
     }
 
     private String extractToken(String token) throws AuthException {
-        if (token.isEmpty()) throw new AuthException("access token was not informed.");
     
 
         if (token.contains(BEARER)) {

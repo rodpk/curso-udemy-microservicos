@@ -2,6 +2,10 @@ server:
   port: ${PORT:8080}
 
 spring:
+
+  main: 
+    allow-bean-definition-overriding: true ##spring permite criar bean de um serviço interno do proprio spring
+
   application:
     name: product-api
 
@@ -23,7 +27,27 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
+  
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:5672} ## curso falou 5672
+    username: ${RABBIT_MQ_USER:guest}
+    password: ${RABBIT_MQ_PASSWORD:guest}
 
 app-config:
   secrets:
     api-secret: ${API_SECRET:YXV0aC1hcGktc2VjcmV0LWRldjEyMzQ1Ng==}
+  
+  rabbit:
+    exchange:
+      product: product.topic
+
+    routingKey:
+      product-stock: product-stock-update.routingKey
+      sales-confirmation: sales-confirmation.routingKey
+
+    queue:
+      product-stock: product-stock-update.queue
+      sales-confirmation: sales-confirmation.queue
+
+  
