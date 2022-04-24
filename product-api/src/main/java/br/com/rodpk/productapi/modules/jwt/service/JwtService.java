@@ -1,11 +1,10 @@
 package br.com.rodpk.productapi.modules.jwt.service;
 
-import javax.security.auth.message.AuthException;
-
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import br.com.rodpk.productapi.config.exception.AuthException;
 import br.com.rodpk.productapi.modules.jwt.dto.JwtResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -15,7 +14,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     
-    private static final String BEARER = "bearer ";
+    private static final String BEARER = "Bearer ";
     @Value("${app-config.secrets.api-secret}")
     private String apiSecret;
 
@@ -44,8 +43,7 @@ public class JwtService {
         if (token.isEmpty()) throw new AuthException("access token was not informed.");
     
 
-        if (token.toLowerCase().contains(BEARER)) {
-            token = token.toLowerCase();
+        if (token.contains(BEARER)) {
             token = token.replace(BEARER, Strings.EMPTY);
         }
 
