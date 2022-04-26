@@ -30,11 +30,16 @@ spring:
   
   rabbitmq:
     host: ${RABBIT_MQ_HOST:localhost}
-    port: ${RABBIT_MQ_PORT:5672} ## curso falou 5672
+    port: ${RABBIT_MQ_PORT:5672} 
     username: ${RABBIT_MQ_USER:guest}
     password: ${RABBIT_MQ_PASSWORD:guest}
 
 app-config:
+
+
+  services:
+    sales: ${SALES_HOST:localhost}:${SALES_PORT:8082} ##curso colocou http aqui mas acho que vai dar bo qnd for https
+
   secrets:
     api-secret: ${API_SECRET:YXV0aC1hcGktc2VjcmV0LWRldjEyMzQ1Ng==}
   

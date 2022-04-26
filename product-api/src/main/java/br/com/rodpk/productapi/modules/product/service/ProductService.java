@@ -1,21 +1,31 @@
 package br.com.rodpk.productapi.modules.product.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.config.exception.ValidationException;
 import br.com.rodpk.productapi.modules.category.service.CategoryService;
+import br.com.rodpk.productapi.modules.product.dto.ProductQuantityDTO;
 import br.com.rodpk.productapi.modules.product.dto.ProductRequest;
 import br.com.rodpk.productapi.modules.product.dto.ProductResponse;
+import br.com.rodpk.productapi.modules.product.dto.ProductSalesResponse;
 import br.com.rodpk.productapi.modules.product.dto.ProductStockDTO;
 import br.com.rodpk.productapi.modules.product.model.Product;
 import br.com.rodpk.productapi.modules.product.repository.ProductRepository;
+import br.com.rodpk.productapi.modules.sales.client.SalesClient;
+import br.com.rodpk.productapi.modules.sales.dto.SalesConfirmationDTO;
+import br.com.rodpk.productapi.modules.sales.enums.SalesStatus;
+import br.com.rodpk.productapi.modules.sales.rabbitmq.SalesConfirmationSender;
 import br.com.rodpk.productapi.modules.supplier.service.SupplierService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -28,7 +38,13 @@ public class ProductService {
     private SupplierService supplierService;
 
     @Autowired
+    private SalesClient salesClient;
+
+    @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private SalesConfirmationSender sender;
 
     public ProductResponse save(ProductRequest request) {
         validateProductData(request);
@@ -122,6 +138,63 @@ public class ProductService {
     }
 
     public void updateProductStock(ProductStockDTO dto) {
+        try {
+            validateStockUpdateData(dto);
+            updateStock(dto);
+        } catch(Exception ex) {
+            log.error("error while trying to update stock for message with error: {}", ex.getMessage(), ex);
+            var rejected = new SalesConfirmationDTO(dto.getSalesId(), SalesStatus.REJECTED);
+            sender.sendSalesConfirmationMessage(rejected);
+        }
+    }
+
+    @Transactional
+    private void validateStockUpdateData(ProductStockDTO dto) {
+        if (dto == null || dto.getSalesId() == null) throw new ValidationException("product data or id must be informed.");
         
+
+        if (dto.getProducts().isEmpty()) throw new ValidationException("sales products must be informed.");
+
+        dto.getProducts().forEach(salesProduct -> {
+            if (salesProduct.getProductId() == null || salesProduct.getQuantity() == null) 
+                throw new ValidationException("product id and quantity must be informed");
+        });
+    }
+
+    private void updateStock(ProductStockDTO dto) {
+
+        var productsForUpdate = new ArrayList<Product>();
+        
+
+        dto.getProducts().forEach(salesProduct -> {
+            var existingProduct = findById(salesProduct.getProductId());
+            validateQuantityInStock(salesProduct, existingProduct);
+
+            existingProduct.updateStock(salesProduct.getQuantity());
+            productsForUpdate.add(existingProduct);
+        });
+
+        if (!productsForUpdate.isEmpty()) {
+            repository.saveAll(productsForUpdate);
+            var approvedMessage = new SalesConfirmationDTO(dto.getSalesId(), SalesStatus.APPROVED);
+            sender.sendSalesConfirmationMessage(approvedMessage);
+        }
+
+    }
+
+    private void validateQuantityInStock(ProductQuantityDTO salesProduct, Product existingProduct) {
+        if (salesProduct.getQuantity() > existingProduct.getQuantityAvaiable()){
+            throw new ValidationException(String.format("the product $s is out of stock", existingProduct.getName()));
+        }
+    }
+
+    public ProductSalesResponse findProductSales(Integer id) {
+        var product = findById(id);
+        try {
+            var sales = salesClient.findSalesByProductId(id).orElseThrow(() -> new ValidationException("sales was not found to this product."));
+            return ProductSalesResponse.of(product, sales.getSalesIds());
+        } catch(Exception ex) {
+            throw new ValidationException("error trying to get the product's sales");
+        }
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.rodpk.productapi.config.exception.SuccessResponse;
 import br.com.rodpk.productapi.modules.product.dto.ProductRequest;
 import br.com.rodpk.productapi.modules.product.dto.ProductResponse;
+import br.com.rodpk.productapi.modules.product.dto.ProductSalesResponse;
 import br.com.rodpk.productapi.modules.product.service.ProductService;
 
 @RestController
@@ -64,5 +65,12 @@ public class ProductController {
     public SuccessResponse delete(@PathVariable Integer id) {
         return service.delete(id);
     }
+
+    @GetMapping("{id}/sales")
+    public ProductSalesResponse findProductSales(@PathVariable Integer id) {
+        return service.findProductSales(id);
+    }
+    // testar apos sales api estiver pronta
+
 
 }
